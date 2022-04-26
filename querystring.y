@@ -10,7 +10,7 @@ package querystring
 
 %token tSTRING tPHRASE tNUMBER
 %token tAND tOR tNOT tTO tPLUS tMINUS tCOLON
-%token tLEFTBRACKET tRIGHTBRACKET tLEFTRANGE tRIGHTRANGE
+%token tLEFTBRACKET tRIGHTBRACKET tLEFTRANGE tRIGHTRANGE tLEFTRANGEEXCL tRIGHTRANGEEXCL
 %token tGREATER tLESS tEQUAL
 
 %type <s>                tSTRING
@@ -183,13 +183,71 @@ tSTRING tCOLON tLEFTRANGE posOrNegNumber tTO posOrNegNumber tRIGHTRANGE {
 	$$ = q
 }
 |
+tSTRING tCOLON tLEFTRANGEEXCL posOrNegNumber tTO posOrNegNumber tRIGHTRANGE {
+	min := $4
+	max := $6
+	q := NewNumberRangeCondition(&min, &max, false, true)
+	q.SetField($1)
+	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGE posOrNegNumber tTO posOrNegNumber tRIGHTRANGEEXCL {
+	min := $4
+	max := $6
+	q := NewNumberRangeCondition(&min, &max, true, false)
+	q.SetField($1)
+	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGEEXCL posOrNegNumber tTO posOrNegNumber tRIGHTRANGEEXCL {
+	min := $4
+	max := $6
+	q := NewNumberRangeCondition(&min, &max, false, false)
+	q.SetField($1)
+	$$ = q
+}
+|
 tSTRING tCOLON tLEFTRANGE tPHRASE tTO tPHRASE tRIGHTRANGE {
 	min := $4
 	max := $6
 	q := NewTimeRangeCondition(&min, &max, true, true)
 	q.SetField($1)
 	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGE tSTRING tTO tSTRING tRIGHTRANGE {
+	min := $4
+	max := $6
+	q := NewTimeRangeCondition(&min, &max, true, true)
+	q.SetField($1)
+	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGEEXCL tSTRING tTO tSTRING tRIGHTRANGE {
+	min := $4
+	max := $6
+	q := NewTimeRangeCondition(&min, &max, false, true)
+	q.SetField($1)
+	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGE tSTRING tTO tSTRING tRIGHTRANGEEXCL {
+	min := $4
+	max := $6
+	q := NewTimeRangeCondition(&min, &max, true, false)
+	q.SetField($1)
+	$$ = q
+}
+|
+tSTRING tCOLON tLEFTRANGEEXCL tSTRING tTO tSTRING tRIGHTRANGEEXCL {
+	min := $4
+	max := $6
+	q := NewTimeRangeCondition(&min, &max, false, false)
+	q.SetField($1)
+	$$ = q
 };
+
+
 
 posOrNegNumber:
 tNUMBER {

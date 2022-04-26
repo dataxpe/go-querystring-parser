@@ -96,7 +96,7 @@ func startState(l *queryStringLex, next rune, eof bool) (lexState, bool) {
 	switch next {
 	case '"':
 		return inPhraseState, true
-	case '+', '-', ':', '>', '<', '=', '(', ')', '[', ']':
+	case '+', '-', ':', '>', '<', '=', '(', ')', '[', ']', '{', '}':
 		l.buf += string(next)
 		return singleCharOpState, true
 	}
@@ -182,6 +182,12 @@ func singleCharOpState(l *queryStringLex, next rune, eof bool) (lexState, bool) 
 	case "]":
 		l.nextTokenType = tRIGHTRANGE
 		logDebugTokens("RIGHTBRACKET")
+	case "{":
+		l.nextTokenType = tLEFTRANGEEXCL
+		logDebugTokens("LEFTBRACKET")
+	case "}":
+		l.nextTokenType = tRIGHTRANGEEXCL
+		logDebugTokens("RIGHTBRACKET")
 	}
 
 	l.reset()
@@ -190,10 +196,10 @@ func singleCharOpState(l *queryStringLex, next rune, eof bool) (lexState, bool) 
 
 func inNumOrStrState(l *queryStringLex, next rune, eof bool) (lexState, bool) {
 	// only a non-escaped space ends the tilde (or eof)
-	if eof || (!l.inEscape && next == ' ' || next == ')' || next == ']') {
+	if eof || (!l.inEscape && next == ' ' || next == ')' || next == ']' || next == '}') {
 		// end number
 		consumed := true
-		if !eof && (next == ':' || next == ')' || next == ']') {
+		if !eof && (next == ':' || next == ')' || next == ']' || next == '}') {
 			consumed = false
 		}
 
@@ -234,10 +240,10 @@ func inNumOrStrState(l *queryStringLex, next rune, eof bool) (lexState, bool) {
 
 func inStrState(l *queryStringLex, next rune, eof bool) (lexState, bool) {
 	// end on non-escped space, colon, tilde, boost (or eof)
-	if eof || (!l.inEscape && (next == ' ' || next == ':' || next == ')' || next == ']')) {
+	if eof || (!l.inEscape && (next == ' ' || next == ':' || next == ')' || next == ']' || next == '}')) {
 		// end string
 		consumed := true
-		if !eof && (next == ':' || next == ')' || next == ']') {
+		if !eof && (next == ':' || next == ')' || next == ']' || next == '}') {
 			consumed = false
 		}
 
