@@ -1,6 +1,8 @@
 package querystring
 
 import (
+	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/go-test/deep"
@@ -95,6 +97,57 @@ func TestParserD(t *testing.T) {
 	}
 }
 
+func TestParserE(t *testing.T) {
+	cond, err := Parse("message:test AND -key:value")
+	if err != nil {
+		t.Errorf("parse return error, %s", err)
+		return
+	}
+
+	expected := Condition(
+		&AndCondition{
+			Left: &MatchCondition{
+				Field: "message",
+				Value: "test",
+			},
+			Right: &NotCondition{&MatchCondition{
+				Field: "key",
+				Value: "value",
+			}},
+		},
+	)
+
+	if diff := deep.Equal(cond, expected); diff != nil {
+		t.Errorf("returned condition unexpected: diff= %s", diff)
+		return
+	}
+}
+
+func TestParserF(t *testing.T) {
+	cond, err := Parse("-key:value")
+	if err != nil {
+		t.Errorf("parse return error, %s", err)
+		return
+	}
+
+	expected := &NotCondition{
+		&MatchCondition{
+			Field: "key",
+			Value: "value",
+		},
+	}
+
+	if diff := deep.Equal(cond, expected); diff != nil {
+		t.Errorf("returned condition unexpected: diff= %s", diff)
+		return
+	}
+}
+
 func pointer(s string) *string {
 	return &s
+}
+
+func jprint(i interface{}) {
+	j, _ := json.MarshalIndent(i, " ", "\t")
+	fmt.Printf("%s\n\n", j)
 }

@@ -82,8 +82,8 @@ state 7
 
 state 8
 	searchLogicPart:  searchLogicSimplePart.    (6)
-	searchLogicPart:  searchLogicSimplePart.tAND searchLogicPart 
-	searchLogicPart:  searchLogicSimplePart.tOR searchLogicPart 
+	searchLogicPart:  searchLogicSimplePart.tAND searchPart 
+	searchLogicPart:  searchLogicSimplePart.tOR searchPart 
 
 	tAND  shift 17
 	tOR  shift 18
@@ -175,32 +175,40 @@ state 16
 
 
 state 17
-	searchLogicPart:  searchLogicSimplePart tAND.searchLogicPart 
+	searchLogicPart:  searchLogicSimplePart tAND.searchPart 
 
 	tSTRING  shift 12
 	tPHRASE  shift 14
 	tNUMBER  shift 13
 	tNOT  shift 11
+	tPLUS  shift 6
+	tMINUS  shift 7
 	tLEFTBRACKET  shift 10
 	.  error
 
 	searchBase  goto 9
-	searchLogicPart  goto 22
+	searchPart  goto 22
+	searchLogicPart  goto 5
 	searchLogicSimplePart  goto 8
+	searchPrefix  goto 4
 
 state 18
-	searchLogicPart:  searchLogicSimplePart tOR.searchLogicPart 
+	searchLogicPart:  searchLogicSimplePart tOR.searchPart 
 
 	tSTRING  shift 12
 	tPHRASE  shift 14
 	tNUMBER  shift 13
 	tNOT  shift 11
+	tPLUS  shift 6
+	tMINUS  shift 7
 	tLEFTBRACKET  shift 10
 	.  error
 
 	searchBase  goto 9
-	searchLogicPart  goto 23
+	searchPart  goto 23
+	searchLogicPart  goto 5
 	searchLogicSimplePart  goto 8
+	searchPrefix  goto 4
 
 state 19
 	searchLogicSimplePart:  tLEFTBRACKET searchLogicPart.tRIGHTBRACKET 
@@ -250,13 +258,13 @@ state 21
 	posOrNegNumber  goto 26
 
 state 22
-	searchLogicPart:  searchLogicSimplePart tAND searchLogicPart.    (7)
+	searchLogicPart:  searchLogicSimplePart tAND searchPart.    (7)
 
 	.  reduce 7 (src line 57)
 
 
 state 23
-	searchLogicPart:  searchLogicSimplePart tOR searchLogicPart.    (8)
+	searchLogicPart:  searchLogicSimplePart tOR searchPart.    (8)
 
 	.  reduce 8 (src line 61)
 
@@ -613,11 +621,11 @@ state 68
 39 grammar rules, 69/16000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 58 working sets used
-memory: parser 33/240000
-12 extra closures
-92 shift entries, 1 exceptions
+memory: parser 37/240000
+15 extra closures
+96 shift entries, 1 exceptions
 22 goto entries
-12 entries saved by goto default
-Optimizer space used: output 90/240000
-90 table entries, 0 zero
+16 entries saved by goto default
+Optimizer space used: output 91/240000
+91 table entries, 1 zero
 maximum spread: 22, maximum offset: 53

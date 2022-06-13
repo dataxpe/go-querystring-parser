@@ -55,11 +55,11 @@ searchLogicSimplePart {
 	$$ = $1
 }
 |
-searchLogicSimplePart tAND searchLogicPart {
+searchLogicSimplePart tAND searchPart {
 	$$ = NewAndCondition($1, $3)
 }
 |
-searchLogicSimplePart tOR searchLogicPart {
+searchLogicSimplePart tOR searchPart {
 	$$ = NewOrCondition($1, $3)
 };
 
